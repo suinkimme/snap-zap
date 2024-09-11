@@ -6,7 +6,11 @@ export default function Canvas(
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   // 이미지를 붙여넣기 위한 함수
-  const pasteImageFromClipboard = (event: ClipboardEvent) => {
+  const pasteImageFromClipboard = (
+    event: ClipboardEvent,
+    canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D
+  ) => {
     const items = event.clipboardData?.items;
 
     if (!items) return;
@@ -17,8 +21,6 @@ export default function Canvas(
         const img = new Image();
 
         img.onload = () => {
-          const canvas = ref.current;
-          const context = canvas?.getContext("2d");
           if (canvas && context) {
             const { width: cwidth, height: cheight } = canvas;
             const centerX = cwidth / 2;
@@ -41,15 +43,30 @@ export default function Canvas(
   };
 
   useEffect(() => {
-    const handlePaste = (event: ClipboardEvent) => {
-      pasteImageFromClipboard(event);
-    };
+    const canvas = ref.current;
+    const context = canvas?.getContext("2d");
 
-    window.addEventListener("paste", handlePaste);
+    if (canvas && context) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-    return () => {
-      window.removeEventListener("paste", handlePaste);
-    };
+      const handlePaste = (event: ClipboardEvent) => {
+        pasteImageFromClipboard(event, canvas, context);
+      };
+
+      const handleResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+
+      window.addEventListener("paste", handlePaste);
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("paste", handlePaste);
+        window.removeEventListener("resize", handleResize);
+      };
+    }
   }, []);
 
   return <canvas ref={ref} {...props} />;
