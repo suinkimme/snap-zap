@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export default function Canvas(
-  props: React.CanvasHTMLAttributes<HTMLCanvasElement>
+  props: React.CanvasHTMLAttributes<HTMLCanvasElement>,
 ) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
@@ -9,14 +9,14 @@ export default function Canvas(
   const pasteImageFromClipboard = (
     event: ClipboardEvent,
     canvas: HTMLCanvasElement,
-    context: CanvasRenderingContext2D
+    context: CanvasRenderingContext2D,
   ) => {
     const items = event.clipboardData?.items;
 
     if (!items) return;
 
     for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf("image") !== -1) {
+      if (items[i].type.indexOf('image') !== -1) {
         const blob = items[i].getAsFile();
         const img = new Image();
 
@@ -44,7 +44,7 @@ export default function Canvas(
 
   useEffect(() => {
     const canvas = ref.current;
-    const context = canvas?.getContext("2d");
+    const context = canvas?.getContext('2d');
 
     if (canvas && context) {
       canvas.width = window.innerWidth;
@@ -59,12 +59,12 @@ export default function Canvas(
         canvas.height = window.innerHeight;
       };
 
-      window.addEventListener("paste", handlePaste);
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('paste', handlePaste);
+      window.addEventListener('resize', handleResize);
 
       return () => {
-        window.removeEventListener("paste", handlePaste);
-        window.removeEventListener("resize", handleResize);
+        window.removeEventListener('paste', handlePaste);
+        window.removeEventListener('resize', handleResize);
       };
     }
   }, []);
