@@ -1,9 +1,14 @@
-import Canvas from "./canvas/Canvas";
+// components
+import IconButton from './components/IconButton/IconButton';
 
 export default function App() {
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-zinc-900">
-      <Canvas className="bg-transparent rounded-md w-full h-full" />
+    <div className="h-screen w-screen bg-[#000000]">
+      <IconButton
+        iconPath="/icons/ic-square-white.svg"
+        iconAlt="rectangle"
+        onClick={console.log}
+      />
     </div>
   );
 }
