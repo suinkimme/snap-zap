@@ -13,11 +13,6 @@ export default function App() {
           iconAlt="rectangle"
           onClick={console.log}
         />
-        <IconButton
-          iconPath="/icons/ic-square-white.svg"
-          iconAlt="rectangle"
-          onClick={console.log}
-        />
       </div>
       <Canvas />
     </div>
