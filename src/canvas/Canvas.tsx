@@ -1,9 +1,61 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Canvas(
   props: React.CanvasHTMLAttributes<HTMLCanvasElement>,
 ) {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [startPos, setStartPos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [endPos, setEndPos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) {
+      setStartPos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+      setIsDrawing(true);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) {
+      setEndPos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (ref.current) {
+      setIsDrawing(false);
+      const ctx = ref.current.getContext('2d');
+      if (ctx) {
+        // ctx.clearRect(0, 0, ref.current.width, ref.current.height);
+        ctx.beginPath();
+        ctx.rect(
+          startPos.x,
+          startPos.y,
+          endPos.x - startPos.x,
+          endPos.y - startPos.y,
+        );
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+  };
 
   // 이미지를 붙여넣기 위한 함수
   const pasteImageFromClipboard = (
@@ -69,5 +121,13 @@ export default function Canvas(
     }
   }, []);
 
-  return <canvas ref={ref} {...props} />;
+  return (
+    <canvas
+      ref={ref}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      {...props}
+    />
+  );
 }
